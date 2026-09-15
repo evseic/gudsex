@@ -49,7 +49,7 @@
       position: fixed;
       inset: 0;
       width: 100vw;
-      height: 100vh;
+      height: 100dvh;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
       pointer-events: none;
       z-index: 99;
@@ -60,7 +60,7 @@
       position: fixed;
       inset: 0;
       width: 100%;
-      height: 100vh;
+      height: 100dvh;
       z-index: 0;
       overflow: hidden;
     }
@@ -70,17 +70,17 @@
       height: 100%;
       object-fit: cover;
       object-position: center 30%;
-      filter: contrast(105%) brightness(88%) grayscale(10%);
+      filter: contrast(106%) brightness(84%) grayscale(10%);
       transform: scale(1.02);
-      transition: filter 0.8s ease, transform 10s ease;
+      transition: filter 0.8s ease, transform 10s ease, object-position 0.5s ease;
     }
 
     .hero-vignette {
       position: absolute;
       inset: 0;
       background: 
-        radial-gradient(circle at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.85) 100%),
-        linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.85) 100%);
+        radial-gradient(circle at center, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.85) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.9) 100%);
       pointer-events: none;
       transition: opacity 0.5s ease;
     }
@@ -106,7 +106,7 @@
       left: 0;
       right: 0;
       z-index: 50;
-      padding: 2rem 2.5rem;
+      padding: 1.75rem 2rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -115,20 +115,20 @@
 
     .brand-logo {
       font-family: var(--font-heading);
-      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-size: clamp(1.4rem, 4.5vw, 2rem);
       font-weight: 800;
       letter-spacing: -0.04em;
       text-transform: lowercase;
       color: #ffffff;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
       text-decoration: none;
-      text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+      text-shadow: 0 4px 20px rgba(0,0,0,0.9);
     }
 
     .brand-star {
-      font-size: clamp(1.1rem, 3vw, 1.3rem);
+      font-size: clamp(1rem, 3vw, 1.25rem);
       color: #ffffff;
       animation: starPulse 3s infinite ease-in-out;
     }
@@ -141,7 +141,7 @@
     .header-controls {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.6rem;
     }
 
     .btn-glass {
@@ -150,14 +150,14 @@
       color: #ffffff;
       font-family: var(--font-mono);
       font-size: clamp(0.65rem, 1.8vw, 0.75rem);
-      letter-spacing: 0.12em;
-      padding: 0.55rem 1rem;
-      border-radius: 2px;
+      letter-spacing: 0.1em;
+      padding: 0.55rem 0.95rem;
+      border-radius: 4px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
       transition: all 0.25s ease;
       text-transform: uppercase;
     }
@@ -189,7 +189,7 @@
       font-weight: 700;
       letter-spacing: 0.15em;
       padding: 0.85rem 1.75rem;
-      border-radius: 2px;
+      border-radius: 4px;
       cursor: pointer;
       text-transform: uppercase;
       box-shadow: 0 10px 40px rgba(0,0,0,0.9);
@@ -211,12 +211,12 @@
     .stage-container {
       position: relative;
       z-index: 10;
-      min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem 1.25rem;
+      padding: 2rem 1.5rem;
       text-align: center;
       transition: opacity 0.4s ease;
     }
@@ -224,55 +224,55 @@
     /* Animated Coming Soon */
     .coming-soon-title {
       font-family: var(--font-heading);
-      font-size: clamp(1.6rem, 5.5vw, 3.2rem);
+      font-size: clamp(1.6rem, 5.2vw, 3rem);
       font-weight: 800;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       color: #ffffff;
-      line-height: 1.1;
-      margin-bottom: 1.25rem;
+      line-height: 1.15;
+      margin-bottom: 1rem;
       animation: comingSoonPulse 4s infinite ease-in-out;
       display: inline-block;
-      max-width: 90vw;
+      white-space: nowrap;
     }
 
     @keyframes comingSoonPulse {
       0%, 100% {
-        opacity: 0.85;
-        letter-spacing: 0.18em;
-        text-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+        opacity: 0.9;
+        letter-spacing: 0.16em;
+        text-shadow: 0 0 14px rgba(255, 255, 255, 0.3);
         transform: translateY(0);
       }
       50% {
         opacity: 1;
-        letter-spacing: 0.24em;
-        text-shadow: 0 0 35px rgba(255, 255, 255, 0.9), 0 0 10px rgba(255, 255, 255, 0.5);
-        transform: translateY(-4px);
+        letter-spacing: 0.22em;
+        text-shadow: 0 0 35px rgba(255, 255, 255, 0.9), 0 0 12px rgba(255, 255, 255, 0.6);
+        transform: translateY(-3px);
       }
     }
 
     .subscribe-label {
       font-family: var(--font-mono);
-      font-size: clamp(0.725rem, 2.5vw, 0.95rem);
+      font-size: clamp(0.7rem, 2.2vw, 0.875rem);
       text-transform: uppercase;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.22em;
       color: rgba(255, 255, 255, 0.75);
-      margin-bottom: 1.5rem;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+      margin-bottom: 1.75rem;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.9);
     }
 
     /* Form */
     .subscribe-form-box {
-      background: rgba(0, 0, 0, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(10, 10, 10, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       backdrop-filter: blur(24px);
-      padding: 0.5rem;
-      border-radius: 4px;
+      padding: 0.45rem;
+      border-radius: 6px;
       width: 100%;
       max-width: 440px;
       display: flex;
       gap: 0.5rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
@@ -287,8 +287,8 @@
       border: none;
       color: #ffffff;
       font-family: var(--font-mono);
-      font-size: clamp(0.75rem, 2.5vw, 0.85rem);
-      padding: 0.75rem 0.85rem;
+      font-size: clamp(0.75rem, 2.2vw, 0.85rem);
+      padding: 0.75rem 0.9rem;
       outline: none;
       width: 100%;
     }
@@ -302,11 +302,11 @@
       color: #000000;
       border: 1px solid #ffffff;
       font-family: var(--font-mono);
-      font-size: clamp(0.7rem, 2.2vw, 0.8rem);
+      font-size: clamp(0.7rem, 2vw, 0.8rem);
       font-weight: 700;
       letter-spacing: 0.15em;
-      padding: 0.75rem 1.35rem;
-      border-radius: 2px;
+      padding: 0.75rem 1.4rem;
+      border-radius: 4px;
       cursor: pointer;
       text-transform: uppercase;
       transition: all 0.25s ease;
@@ -341,12 +341,12 @@
       left: 0;
       right: 0;
       z-index: 50;
-      padding: 1.5rem 2.5rem;
+      padding: 1.5rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-family: var(--font-mono);
-      font-size: clamp(0.65rem, 2vw, 0.75rem);
+      font-size: clamp(0.65rem, 1.8vw, 0.75rem);
       color: rgba(255, 255, 255, 0.5);
       letter-spacing: 0.15em;
       transition: opacity 0.4s ease;
@@ -368,6 +368,12 @@
 
     /* MOBILE & TABLET MEDIA QUERIES */
     @media (max-width: 768px) {
+      /* Shift background photo left so model's face & sweater logo are framed in portrait */
+      .hero-photo {
+        object-position: 22% 35%;
+        filter: contrast(108%) brightness(84%) grayscale(10%);
+      }
+
       .site-header {
         padding: 1.25rem 1.25rem;
       }
@@ -375,12 +381,12 @@
       .footer-bar {
         padding: 1.25rem;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 0.6rem;
         text-align: center;
       }
 
       .exit-photo-btn {
-        bottom: 1.5rem;
+        bottom: 2rem;
         right: 50%;
         transform: translateX(50%);
         width: max-content;
@@ -388,22 +394,32 @@
       }
     }
 
-    @media (max-width: 420px) {
+    @media (max-width: 480px) {
+      /* Mobile portrait framing: focus on model's face */
+      .hero-photo {
+        object-position: 18% center;
+      }
+
+      .coming-soon-title {
+        font-size: clamp(1.35rem, 6vw, 1.85rem);
+        letter-spacing: 0.14em;
+        white-space: normal;
+      }
+
       .subscribe-form-box {
         flex-direction: column;
         padding: 0.6rem;
+        gap: 0.6rem;
+        background: rgba(0, 0, 0, 0.82);
       }
       
       .btn-submit {
         width: 100%;
+        padding: 0.85rem;
       }
 
-      .btn-glass span {
-        display: none;
-      }
-      
       .btn-glass {
-        padding: 0.55rem 0.75rem;
+        padding: 0.5rem 0.75rem;
       }
     }
   </style>
@@ -424,8 +440,8 @@
     </a>
 
     <div class="header-controls">
-      <!-- Trap Audio Button (Icon only) -->
-      <button class="btn-glass" id="audioBtn" title="Toggle Audio" style="padding: 0.6rem 0.9rem;">
+      <!-- Trap Audio Button -->
+      <button class="btn-glass" id="audioBtn" title="Toggle Audio" style="padding: 0.55rem 0.75rem;">
         <i data-lucide="volume-x"></i> <span id="audioTxt"></span>
       </button>
 
@@ -498,7 +514,6 @@
     // Trap Audio Synth
     let audioCtx = null;
     const audioBtn = document.getElementById('audioBtn');
-    const audioTxt = document.getElementById('audioTxt');
 
     audioBtn.addEventListener('click', () => {
       if (audioCtx) {
