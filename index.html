@@ -218,7 +218,7 @@
       gap: 0.6rem;
     }
 
-    /* STAGE CONTAINER */
+    /* Stage */
     .stage-container {
       position: relative;
       z-index: 10;
@@ -400,7 +400,7 @@
       }
 
       .footer-bar {
-        padding: 1rem 1.25rem;
+        padding: 1.25rem;
         flex-direction: column;
         gap: 0.5rem;
         text-align: center;
@@ -512,8 +512,15 @@
     const fullPhotoBtn = document.getElementById('fullPhotoBtn');
     const exitPhotoBtn = document.getElementById('exitPhotoBtn');
 
-    fullPhotoBtn.addEventListener('click', () => body.classList.add('full-photo-active'));
-    exitPhotoBtn.addEventListener('click', () => body.classList.remove('full-photo-active'));
+    fullPhotoBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      body.classList.add('full-photo-active');
+    });
+
+    exitPhotoBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      body.classList.remove('full-photo-active');
+    });
 
     const subForm = document.getElementById('subForm');
     const successMsg = document.getElementById('successMsg');
@@ -538,7 +545,13 @@
     const audioBtn = document.getElementById('audioBtn');
 
     function startSound() {
-      if (audioCtx) return;
+      if (audioCtx) {
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        return;
+      }
+
       try {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') {
@@ -563,7 +576,7 @@
         audioBtn.innerHTML = '<i data-lucide="volume-2"></i> <span style="font-size: 0.65rem;">ON</span>';
         lucide.createIcons();
       } catch (e) {
-        console.log("Audio waiting for first interaction");
+        console.log("Audio waiting for user tap");
       }
     }
 
@@ -577,14 +590,15 @@
       }
     }
 
-    audioBtn.addEventListener('click', () => {
+    audioBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       if (audioCtx) stopSound(); else startSound();
     });
 
-    // Auto-start on load & trigger on first user touch/tap anywhere
-    startSound();
-    window.addEventListener('click', startSound, { once: true });
-    window.addEventListener('touchstart', startSound, { once: true });
+    // Trigger sound on ANY tap/touch/click anywhere on the screen
+    window.addEventListener('pointerdown', startSound, { capture: true });
+    window.addEventListener('touchstart', startSound, { capture: true });
+    window.addEventListener('click', startSound, { capture: true });
   </script>
 </body>
 </html>

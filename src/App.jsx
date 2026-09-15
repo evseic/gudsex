@@ -10,19 +10,18 @@ export default function App() {
 
   const audioCtxRef = useRef(null);
 
-  // Function to initialize & start audio
-  const startAudio = () => {
-    if (audioCtxRef.current) return;
+  // Initialize and start audio context directly in touch handler
+  const initAudio = () => {
+    if (audioCtxRef.current) {
+      if (audioCtxRef.current.state === 'suspended') {
+        audioCtxRef.current.resume();
+      }
+      return;
+    }
 
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       const ctx = new AudioContext();
-
-      // Resume context if suspended
-      if (ctx.state === 'suspended') {
-        ctx.resume();
-      }
-
       audioCtxRef.current = ctx;
 
       const osc = ctx.createOscillator();
@@ -44,7 +43,7 @@ export default function App() {
       osc.start();
       setAudioPlaying(true);
     } catch (err) {
-      console.log("Autoplay interaction pending...", err);
+      console.log("Audio touch init:", err);
     }
   };
 
@@ -56,30 +55,32 @@ export default function App() {
     setAudioPlaying(false);
   };
 
-  const toggleAudio = () => {
+  const toggleAudio = (e) => {
+    e.stopPropagation();
     if (audioPlaying) {
       stopAudio();
     } else {
-      startAudio();
+      initAudio();
     }
   };
 
-  // Auto-start sound on load & on first user tap/click anywhere
+  // Attach global tap/touch/click listener to document & window
   useEffect(() => {
-    startAudio();
-
-    const handleFirstInteraction = () => {
-      startAudio();
+    const handleGlobalTap = () => {
+      initAudio();
     };
 
-    window.addEventListener('click', handleFirstInteraction, { once: true });
-    window.addEventListener('touchstart', handleFirstInteraction, { once: true });
-    window.addEventListener('keydown', handleFirstInteraction, { once: true });
+    // Attach to window and document with capture
+    window.addEventListener('pointerdown', handleGlobalTap, { capture: true });
+    window.addEventListener('touchstart', handleGlobalTap, { capture: true });
+    window.addEventListener('touchend', handleGlobalTap, { capture: true });
+    window.addEventListener('click', handleGlobalTap, { capture: true });
 
     return () => {
-      window.removeEventListener('click', handleFirstInteraction);
-      window.removeEventListener('touchstart', handleFirstInteraction);
-      window.removeEventListener('keydown', handleFirstInteraction);
+      window.removeEventListener('pointerdown', handleGlobalTap, { capture: true });
+      window.removeEventListener('touchstart', handleGlobalTap, { capture: true });
+      window.removeEventListener('touchend', handleGlobalTap, { capture: true });
+      window.removeEventListener('click', handleGlobalTap, { capture: true });
     };
   }, []);
 
@@ -101,7 +102,7 @@ export default function App() {
   };
 
   return (
-    <div className={fullPhoto ? 'full-photo-active' : ''}>
+    <div className={fullPhoto ? 'full-photo-active' : ''} onClick={initAudio}onTouchStart={initAudio}>
       {/* Noise overlay */}
       <div className="noise-overlay" />
 
@@ -131,7 +132,7 @@ export default function App() {
 
           {/* Open Full Photo Button */}
           <button 
-            onClick={() => setFullPhoto(true)} 
+            onClick={(e) => { e.stopPropagation(); setFullPhoto(true); }} 
             className="btn-glass"
             title="View Full Photo"
           >
@@ -141,26 +142,22 @@ export default function App() {
         </div>
       </header>
 
-      {/* Exit Photo Button (shown when viewing full photo) */}
+      {/* Exit Photo Button */}
       <button 
-        onClick={() => setFullPhoto(false)} 
+        onClick={(e) => { e.stopPropagation(); setFullPhoto(false); }} 
         className="exit-photo-btn"
       >
         <Minimize2 size={16} /> Exit Full Photo
       </button>
 
-      {/* Main Stage (Lower portion of viewport) */}
+      {/* Main Stage */}
       <main className="stage-container">
         <div className="content-box">
-          {/* Smaller & Animated COMING SOON */}
           <h1 className="coming-soon-title">✦ Coming Soon ✦</h1>
-
-          {/* SUBSCRIBE TO NEWS */}
           <p className="subscribe-label">Subscribe to news</p>
 
-          {/* Subscribe Form */}
           {!subscribed ? (
-            <form onSubmit={handleSubmit} className="subscribe-form-box">
+            <form onSubmit={handleSubmit} className="subscribe-form-box" onClick={(e) => e.stopPropagation()}>
               <input 
                 type="email" 
                 required
@@ -181,7 +178,7 @@ export default function App() {
         </div>
       </main>
 
-      {/* Minimal Footer */}
+      {/* Footer */}
       <footer className="footer-bar">
         <span>© GUDSEX ✦ ALL RIGHTS RESERVED</span>
         <div>
@@ -190,6 +187,7 @@ export default function App() {
             target="_blank" 
             rel="noopener noreferrer" 
             className="social-link"
+            onClick={(e) => e.stopPropagation()}
           >
             <Instagram size={14} /> INSTAGRAM @EVSEICIK
           </a>
