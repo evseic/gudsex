@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX, Maximize2, Minimize2, Instagram } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -10,43 +10,78 @@ export default function App() {
 
   const audioCtxRef = useRef(null);
 
-  // Web Audio Trap Ambient Drone Synth
-  const toggleAudio = () => {
-    if (audioPlaying) {
-      if (audioCtxRef.current) {
-        audioCtxRef.current.close();
-        audioCtxRef.current = null;
+  // Function to initialize & start audio
+  const startAudio = () => {
+    if (audioCtxRef.current) return;
+
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioContext();
+
+      // Resume context if suspended
+      if (ctx.state === 'suspended') {
+        ctx.resume();
       }
-      setAudioPlaying(false);
-    } else {
-      try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const ctx = new AudioContext();
-        audioCtxRef.current = ctx;
 
-        const osc = ctx.createOscillator();
-        const filter = ctx.createBiquadFilter();
-        const gain = ctx.createGain();
+      audioCtxRef.current = ctx;
 
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(43.65, ctx.currentTime);
+      const osc = ctx.createOscillator();
+      const filter = ctx.createBiquadFilter();
+      const gain = ctx.createGain();
 
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(190, ctx.currentTime);
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(43.65, ctx.currentTime);
 
-        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(190, ctx.currentTime);
 
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
 
-        osc.start();
-        setAudioPlaying(true);
-      } catch (err) {
-        console.error("Audio error:", err);
-      }
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      setAudioPlaying(true);
+    } catch (err) {
+      console.log("Autoplay interaction pending...", err);
     }
   };
+
+  const stopAudio = () => {
+    if (audioCtxRef.current) {
+      audioCtxRef.current.close();
+      audioCtxRef.current = null;
+    }
+    setAudioPlaying(false);
+  };
+
+  const toggleAudio = () => {
+    if (audioPlaying) {
+      stopAudio();
+    } else {
+      startAudio();
+    }
+  };
+
+  // Auto-start sound on load & on first user tap/click anywhere
+  useEffect(() => {
+    startAudio();
+
+    const handleFirstInteraction = () => {
+      startAudio();
+    };
+
+    window.addEventListener('click', handleFirstInteraction, { once: true });
+    window.addEventListener('touchstart', handleFirstInteraction, { once: true });
+    window.addEventListener('keydown', handleFirstInteraction, { once: true });
+
+    return () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -83,7 +118,7 @@ export default function App() {
         </a>
 
         <div className="header-controls">
-          {/* Audio Toggle Button (Icon only, no words 'vibe' or 'sound') */}
+          {/* Audio Toggle Button */}
           <button 
             onClick={toggleAudio} 
             className={`btn-glass ${audioPlaying ? 'audio-active' : ''}`}
@@ -114,34 +149,36 @@ export default function App() {
         <Minimize2 size={16} /> Exit Full Photo
       </button>
 
-      {/* Main Centered Stage */}
+      {/* Main Stage (Lower portion of viewport) */}
       <main className="stage-container">
-        {/* Smaller & Animated COMING SOON */}
-        <h1 className="coming-soon-title">✦ Coming Soon ✦</h1>
+        <div className="content-box">
+          {/* Smaller & Animated COMING SOON */}
+          <h1 className="coming-soon-title">✦ Coming Soon ✦</h1>
 
-        {/* SUBSCRIBE TO NEWS under coming soon */}
-        <p className="subscribe-label">Subscribe to news</p>
+          {/* SUBSCRIBE TO NEWS */}
+          <p className="subscribe-label">Subscribe to news</p>
 
-        {/* Subscribe Form */}
-        {!subscribed ? (
-          <form onSubmit={handleSubmit} className="subscribe-form-box">
-            <input 
-              type="email" 
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="ENTER YOUR EMAIL..."
-              className="subscribe-input"
-            />
-            <button type="submit" className="btn-submit">
-              Subscribe
-            </button>
-          </form>
-        ) : (
-          <div className="success-msg">
-            ✦ ACCESS GRANTED // YOU ARE SUBSCRIBED
-          </div>
-        )}
+          {/* Subscribe Form */}
+          {!subscribed ? (
+            <form onSubmit={handleSubmit} className="subscribe-form-box">
+              <input 
+                type="email" 
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="ENTER YOUR EMAIL..."
+                className="subscribe-input"
+              />
+              <button type="submit" className="btn-submit">
+                Subscribe
+              </button>
+            </form>
+          ) : (
+            <div className="success-msg">
+              ✦ ACCESS GRANTED // YOU ARE SUBSCRIBED
+            </div>
+          )}
+        </div>
       </main>
 
       {/* Minimal Footer */}

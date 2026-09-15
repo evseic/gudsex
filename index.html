@@ -3,8 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>GUDSEX ✦ COMING SOON</title>
+  <title>gudsex ✦ coming soon</title>
   
+  <!-- Meta & Favicon Icons -->
+  <link rel="icon" type="image/svg+xml" href="public/favicon.svg">
+  <link rel="shortcut icon" type="image/svg+xml" href="public/favicon.svg">
+  <link rel="apple-touch-icon" href="public/favicon.svg">
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="gudsex ✦ coming soon">
+  <meta property="og:description" content="gudsex official clothing brand. subscribe to news for priority access.">
+  <meta property="og:image" content="public/hero.png">
+  <meta name="twitter:card" content="summary_large_image">
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -70,7 +81,7 @@
       height: 100%;
       object-fit: cover;
       object-position: center 30%;
-      filter: contrast(106%) brightness(84%) grayscale(10%);
+      filter: contrast(106%) brightness(88%) grayscale(10%);
       transform: scale(1.02);
       transition: filter 0.8s ease, transform 10s ease, object-position 0.5s ease;
     }
@@ -79,8 +90,8 @@
       position: absolute;
       inset: 0;
       background: 
-        radial-gradient(circle at center, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.85) 100%),
-        linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.9) 100%);
+        linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.85) 85%, rgba(0,0,0,0.95) 100%),
+        radial-gradient(circle at 30% 30%, transparent 30%, rgba(0, 0, 0, 0.75) 100%);
       pointer-events: none;
       transition: opacity 0.5s ease;
     }
@@ -207,7 +218,7 @@
       gap: 0.6rem;
     }
 
-    /* Stage */
+    /* STAGE CONTAINER */
     .stage-container {
       position: relative;
       z-index: 10;
@@ -215,22 +226,30 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 2rem 1.5rem;
+      justify-content: flex-end;
+      padding: 2rem 1.5rem 5.5rem 1.5rem;
       text-align: center;
       transition: opacity 0.4s ease;
     }
 
-    /* Animated Coming Soon */
+    .content-box {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Animated Coming Soon Title */
     .coming-soon-title {
       font-family: var(--font-heading);
-      font-size: clamp(1.6rem, 5.2vw, 3rem);
+      font-size: clamp(1.5rem, 4.5vw, 2.75rem);
       font-weight: 800;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: #ffffff;
-      line-height: 1.15;
-      margin-bottom: 1rem;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
       animation: comingSoonPulse 4s infinite ease-in-out;
       display: inline-block;
       white-space: nowrap;
@@ -239,13 +258,13 @@
     @keyframes comingSoonPulse {
       0%, 100% {
         opacity: 0.9;
-        letter-spacing: 0.16em;
+        letter-spacing: 0.18em;
         text-shadow: 0 0 14px rgba(255, 255, 255, 0.3);
         transform: translateY(0);
       }
       50% {
         opacity: 1;
-        letter-spacing: 0.22em;
+        letter-spacing: 0.24em;
         text-shadow: 0 0 35px rgba(255, 255, 255, 0.9), 0 0 12px rgba(255, 255, 255, 0.6);
         transform: translateY(-3px);
       }
@@ -253,26 +272,25 @@
 
     .subscribe-label {
       font-family: var(--font-mono);
-      font-size: clamp(0.7rem, 2.2vw, 0.875rem);
+      font-size: clamp(0.7rem, 2vw, 0.85rem);
       text-transform: uppercase;
       letter-spacing: 0.22em;
-      color: rgba(255, 255, 255, 0.75);
-      margin-bottom: 1.75rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 1.5rem;
       text-shadow: 0 2px 10px rgba(0,0,0,0.9);
     }
 
     /* Form */
     .subscribe-form-box {
-      background: rgba(10, 10, 10, 0.75);
+      background: rgba(8, 8, 8, 0.78);
       border: 1px solid rgba(255, 255, 255, 0.3);
       backdrop-filter: blur(24px);
       padding: 0.45rem;
       border-radius: 6px;
       width: 100%;
-      max-width: 440px;
       display: flex;
       gap: 0.5rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
@@ -319,7 +337,7 @@
     }
 
     .success-msg {
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.88);
       border: 1px solid #ffffff;
       backdrop-filter: blur(20px);
       padding: 1rem 1.5rem;
@@ -331,7 +349,7 @@
       text-transform: uppercase;
       box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
       display: none;
-      max-width: 90vw;
+      width: 100%;
     }
 
     /* Footer */
@@ -341,7 +359,7 @@
       left: 0;
       right: 0;
       z-index: 50;
-      padding: 1.5rem 2rem;
+      padding: 1.25rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -368,9 +386,8 @@
 
     /* MOBILE & TABLET MEDIA QUERIES */
     @media (max-width: 768px) {
-      /* Shift background photo left so model's face & sweater logo are framed in portrait */
       .hero-photo {
-        object-position: 22% 35%;
+        object-position: 30% 35%;
         filter: contrast(108%) brightness(84%) grayscale(10%);
       }
 
@@ -378,10 +395,14 @@
         padding: 1.25rem 1.25rem;
       }
 
+      .stage-container {
+        padding: 1.5rem 1.25rem 6.5rem 1.25rem;
+      }
+
       .footer-bar {
-        padding: 1.25rem;
+        padding: 1rem 1.25rem;
         flex-direction: column;
-        gap: 0.6rem;
+        gap: 0.5rem;
         text-align: center;
       }
 
@@ -395,22 +416,21 @@
     }
 
     @media (max-width: 480px) {
-      /* Mobile portrait framing: focus on model's face */
       .hero-photo {
-        object-position: 18% center;
+        object-position: 32% 38%;
       }
 
       .coming-soon-title {
-        font-size: clamp(1.35rem, 6vw, 1.85rem);
+        font-size: clamp(1.25rem, 5.5vw, 1.75rem);
         letter-spacing: 0.14em;
-        white-space: normal;
+        white-space: nowrap;
       }
 
       .subscribe-form-box {
         flex-direction: column;
         padding: 0.6rem;
         gap: 0.6rem;
-        background: rgba(0, 0, 0, 0.82);
+        background: rgba(0, 0, 0, 0.85);
       }
       
       .btn-submit {
@@ -459,17 +479,19 @@
 
   <!-- Stage -->
   <main class="stage-container">
-    <h1 class="coming-soon-title">✦ Coming Soon ✦</h1>
-    
-    <p class="subscribe-label">Subscribe to news</p>
+    <div class="content-box">
+      <h1 class="coming-soon-title">✦ Coming Soon ✦</h1>
+      
+      <p class="subscribe-label">Subscribe to news</p>
 
-    <form class="subscribe-form-box" id="subForm">
-      <input type="email" required placeholder="ENTER YOUR EMAIL..." class="subscribe-input" id="emailInput">
-      <button type="submit" class="btn-submit">Subscribe</button>
-    </form>
+      <form class="subscribe-form-box" id="subForm">
+        <input type="email" required placeholder="ENTER YOUR EMAIL..." class="subscribe-input" id="emailInput">
+        <button type="submit" class="btn-submit">Subscribe</button>
+      </form>
 
-    <div class="success-msg" id="successMsg">
-      ✦ ACCESS GRANTED // YOU ARE SUBSCRIBED
+      <div class="success-msg" id="successMsg">
+        ✦ ACCESS GRANTED // YOU ARE SUBSCRIBED
+      </div>
     </div>
   </main>
 
@@ -515,15 +537,13 @@
     let audioCtx = null;
     const audioBtn = document.getElementById('audioBtn');
 
-    audioBtn.addEventListener('click', () => {
-      if (audioCtx) {
-        audioCtx.close();
-        audioCtx = null;
-        audioBtn.classList.remove('audio-active');
-        audioBtn.innerHTML = '<i data-lucide="volume-x"></i>';
-        lucide.createIcons();
-      } else {
+    function startSound() {
+      if (audioCtx) return;
+      try {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
         const osc = audioCtx.createOscillator();
         const filter = audioCtx.createBiquadFilter();
         const gain = audioCtx.createGain();
@@ -542,8 +562,29 @@
         audioBtn.classList.add('audio-active');
         audioBtn.innerHTML = '<i data-lucide="volume-2"></i> <span style="font-size: 0.65rem;">ON</span>';
         lucide.createIcons();
+      } catch (e) {
+        console.log("Audio waiting for first interaction");
       }
+    }
+
+    function stopSound() {
+      if (audioCtx) {
+        audioCtx.close();
+        audioCtx = null;
+        audioBtn.classList.remove('audio-active');
+        audioBtn.innerHTML = '<i data-lucide="volume-x"></i>';
+        lucide.createIcons();
+      }
+    }
+
+    audioBtn.addEventListener('click', () => {
+      if (audioCtx) stopSound(); else startSound();
     });
+
+    // Auto-start on load & trigger on first user touch/tap anywhere
+    startSound();
+    window.addEventListener('click', startSound, { once: true });
+    window.addEventListener('touchstart', startSound, { once: true });
   </script>
 </body>
 </html>
