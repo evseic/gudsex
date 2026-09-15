@@ -2,9 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX, Maximize2, Minimize2, Instagram } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
+const SUPABASE_URL = 'https://dambuszjzkaeezjlkybh.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_yq1OhLPJFzk0ZLAC_QLtAw__xZmtysP';
+
 export default function App() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [fullPhoto, setFullPhoto] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
 
@@ -70,39 +74,57 @@ export default function App() {
       initAudio();
     };
 
-    // Attach to window and document with capture
     window.addEventListener('pointerdown', handleGlobalTap, { capture: true });
     window.addEventListener('touchstart', handleGlobalTap, { capture: true });
-    window.addEventListener('touchend', handleGlobalTap, { capture: true });
     window.addEventListener('click', handleGlobalTap, { capture: true });
 
     return () => {
       window.removeEventListener('pointerdown', handleGlobalTap, { capture: true });
       window.removeEventListener('touchstart', handleGlobalTap, { capture: true });
-      window.removeEventListener('touchend', handleGlobalTap, { capture: true });
       window.removeEventListener('click', handleGlobalTap, { capture: true });
     };
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !email.includes('@')) return;
 
-    setSubscribed(true);
-    localStorage.setItem('gudsex_subscriber', email);
+    setLoading(true);
 
-    if (window.confetti || confetti) {
-      confetti({
-        particleCount: 75,
-        spread: 70,
-        origin: { y: 0.7 },
-        colors: ['#ffffff', '#aaaaaa', '#444444']
+    try {
+      // Send subscriber email directly into Supabase 'subscribers' table
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/subscribers`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ email: email })
       });
+
+      console.log("Supabase response status:", response.status);
+    } catch (err) {
+      console.error("Supabase insert error:", err);
+    } finally {
+      setLoading(false);
+      setSubscribed(true);
+      localStorage.setItem('gudsex_subscriber', email);
+
+      if (window.confetti || confetti) {
+        confetti({
+          particleCount: 75,
+          spread: 70,
+          origin: { y: 0.7 },
+          colors: ['#ffffff', '#aaaaaa', '#444444']
+        });
+      }
     }
   };
 
   return (
-    <div className={fullPhoto ? 'full-photo-active' : ''} onClick={initAudio}onTouchStart={initAudio}>
+    <div className={fullPhoto ? 'full-photo-active' : ''} onClick={initAudio} onTouchStart={initAudio}>
       {/* Noise overlay */}
       <div className="noise-overlay" />
 
@@ -165,9 +187,10 @@ export default function App() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ENTER YOUR EMAIL..."
                 className="subscribe-input"
+                disabled={loading}
               />
-              <button type="submit" className="btn-submit">
-                Subscribe
+              <button type="submit" className="btn-submit" disabled={loading}>
+                {loading ? 'Submitting...' : 'Subscribe'}
               </button>
             </form>
           ) : (

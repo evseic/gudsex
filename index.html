@@ -218,7 +218,7 @@
       gap: 0.6rem;
     }
 
-    /* Stage */
+    /* STAGE CONTAINER */
     .stage-container {
       position: relative;
       z-index: 10;
@@ -486,7 +486,7 @@
 
       <form class="subscribe-form-box" id="subForm">
         <input type="email" required placeholder="ENTER YOUR EMAIL..." class="subscribe-input" id="emailInput">
-        <button type="submit" class="btn-submit">Subscribe</button>
+        <button type="submit" class="btn-submit" id="submitBtn">Subscribe</button>
       </form>
 
       <div class="success-msg" id="successMsg">
@@ -508,6 +508,9 @@
   <script>
     lucide.createIcons();
 
+    const SUPABASE_URL = 'https://dambuszjzkaeezjlkybh.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_yq1OhLPJFzk0ZLAC_QLtAw__xZmtysP';
+
     const body = document.getElementById('body');
     const fullPhotoBtn = document.getElementById('fullPhotoBtn');
     const exitPhotoBtn = document.getElementById('exitPhotoBtn');
@@ -523,20 +526,43 @@
     });
 
     const subForm = document.getElementById('subForm');
+    const emailInput = document.getElementById('emailInput');
+    const submitBtn = document.getElementById('submitBtn');
     const successMsg = document.getElementById('successMsg');
 
-    subForm.addEventListener('submit', (e) => {
+    subForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      subForm.style.display = 'none';
-      successMsg.style.display = 'block';
+      const email = emailInput.value;
+      if (!email || !email.includes('@')) return;
 
-      if (window.confetti) {
-        confetti({
-          particleCount: 75,
-          spread: 70,
-          origin: { y: 0.7 },
-          colors: ['#ffffff', '#aaaaaa', '#444444']
+      submitBtn.innerText = 'Submitting...';
+      submitBtn.disabled = true;
+
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/subscribers`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ email: email })
         });
+      } catch (err) {
+        console.error("Supabase insert error:", err);
+      } finally {
+        subForm.style.display = 'none';
+        successMsg.style.display = 'block';
+
+        if (window.confetti) {
+          confetti({
+            particleCount: 75,
+            spread: 70,
+            origin: { y: 0.7 },
+            colors: ['#ffffff', '#aaaaaa', '#444444']
+          });
+        }
       }
     });
 
@@ -595,7 +621,6 @@
       if (audioCtx) stopSound(); else startSound();
     });
 
-    // Trigger sound on ANY tap/touch/click anywhere on the screen
     window.addEventListener('pointerdown', startSound, { capture: true });
     window.addEventListener('touchstart', startSound, { capture: true });
     window.addEventListener('click', startSound, { capture: true });
