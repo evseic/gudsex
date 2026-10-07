@@ -496,9 +496,16 @@
       
       <p class="subscribe-label">Subscribe to news</p>
 
-      <form class="subscribe-form-box" id="subForm">
-        <input type="email" required placeholder="ENTER YOUR EMAIL..." class="subscribe-input" id="emailInput">
-        <button type="submit" class="btn-submit" id="submitBtn">Subscribe</button>
+      <form class="omnisend-subscribe-form subscribe-form-box" id="subForm">
+        <input 
+          type="email" 
+          name="email" 
+          required 
+          placeholder="ENTER YOUR EMAIL..." 
+          class="omnisend-subscribe-input-email subscribe-input" 
+          id="emailInput"
+        >
+        <button type="submit" class="omnisend-subscribe-button btn-submit" id="submitBtn">Subscribe</button>
       </form>
 
       <div class="success-msg" id="successMsg">
@@ -550,27 +557,20 @@
       submitBtn.innerText = 'Submitting...';
       submitBtn.disabled = true;
 
-      // 1. Omnisend Direct Contact Subscription
-      if (window.omnisend) {
-        try {
-          window.omnisend.push(["identify", {
-            email: email,
-            status: "subscribed",
-            identifiers: [{
-              type: "email",
-              id: email,
-              channels: {
-                email: {
-                  status: "subscribed",
-                  statusDate: new Date().toISOString()
-                }
-              }
-            }]
-          }]);
-          window.omnisend.push(["track", "$emailSubscribed", { email: email }]);
-        } catch(omniErr) {
-          console.error("Omnisend integration error:", omniErr);
-        }
+      // 1. Omnisend Direct Push Event
+      window.omnisend = window.omnisend || [];
+      try {
+        window.omnisend.push(["identify", {
+          email: email,
+          status: "subscribed"
+        }]);
+        window.omnisend.push(["contact", {
+          email: email,
+          status: "subscribed"
+        }]);
+        window.omnisend.push(["track", "$emailSubscribed", { email: email }]);
+      } catch(omniErr) {
+        console.error("Omnisend push error:", omniErr);
       }
 
       // 2. Supabase Real-time Database Insert

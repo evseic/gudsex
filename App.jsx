@@ -14,7 +14,6 @@ export default function App() {
 
   const audioCtxRef = useRef(null);
 
-  // Initialize and start audio context directly in touch handler
   const initAudio = () => {
     if (audioCtxRef.current) {
       if (audioCtxRef.current.state === 'suspended') {
@@ -68,7 +67,6 @@ export default function App() {
     }
   };
 
-  // Attach global tap/touch/click listener to document & window
   useEffect(() => {
     const handleGlobalTap = () => {
       initAudio();
@@ -91,27 +89,20 @@ export default function App() {
 
     setLoading(true);
 
-    // 1. Send subscriber email into Omnisend Audience List
-    if (window.omnisend) {
-      try {
-        window.omnisend.push(["identify", {
-          email: email,
-          status: "subscribed",
-          identifiers: [{
-            type: "email",
-            id: email,
-            channels: {
-              email: {
-                status: "subscribed",
-                statusDate: new Date().toISOString()
-              }
-            }
-          }]
-        }]);
-        window.omnisend.push(["track", "$emailSubscribed", { email: email }]);
-      } catch (omniErr) {
-        console.error("Omnisend integration error:", omniErr);
-      }
+    // 1. Send subscriber to Omnisend via JS tracker
+    window.omnisend = window.omnisend || [];
+    try {
+      window.omnisend.push(["identify", {
+        email: email,
+        status: "subscribed"
+      }]);
+      window.omnisend.push(["contact", {
+        email: email,
+        status: "subscribed"
+      }]);
+      window.omnisend.push(["track", "$emailSubscribed", { email: email }]);
+    } catch (omniErr) {
+      console.error("Omnisend push error:", omniErr);
     }
 
     // 2. Send subscriber email into Supabase database
@@ -146,23 +137,19 @@ export default function App() {
 
   return (
     <div className={fullPhoto ? 'full-photo-active' : ''} onClick={initAudio} onTouchStart={initAudio}>
-      {/* Noise overlay */}
       <div className="noise-overlay" />
 
-      {/* Main Fullscreen Background Photo */}
       <div className="hero-photo-container">
         <img src="/hero.png" alt="Gudsex Background" className="hero-photo" />
         <div className="hero-vignette" />
       </div>
 
-      {/* Header Logo & Controls */}
       <header className="site-header">
         <a href="#" className="brand-logo">
           gudsex <span className="brand-star">✦</span>
         </a>
 
         <div className="header-controls">
-          {/* Audio Toggle Button */}
           <button 
             onClick={toggleAudio} 
             className={`btn-glass ${audioPlaying ? 'audio-active' : ''}`}
@@ -173,7 +160,6 @@ export default function App() {
             {audioPlaying && <span style={{ fontSize: '0.65rem' }}>ON</span>}
           </button>
 
-          {/* Open Full Photo Button */}
           <button 
             onClick={(e) => { e.stopPropagation(); setFullPhoto(true); }} 
             className="btn-glass"
@@ -185,7 +171,6 @@ export default function App() {
         </div>
       </header>
 
-      {/* Exit Photo Button */}
       <button 
         onClick={(e) => { e.stopPropagation(); setFullPhoto(false); }} 
         className="exit-photo-btn"
@@ -193,24 +178,28 @@ export default function App() {
         <Minimize2 size={16} /> Exit Full Photo
       </button>
 
-      {/* Main Stage */}
       <main className="stage-container">
         <div className="content-box">
           <h1 className="coming-soon-title">✦ Coming Soon ✦</h1>
           <p className="subscribe-label">Subscribe to news</p>
 
           {!subscribed ? (
-            <form onSubmit={handleSubmit} className="subscribe-form-box" onClick={(e) => e.stopPropagation()}>
+            <form 
+              onSubmit={handleSubmit} 
+              className="omnisend-subscribe-form subscribe-form-box" 
+              onClick={(e) => e.stopPropagation()}
+            >
               <input 
                 type="email" 
+                name="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ENTER YOUR EMAIL..."
-                className="subscribe-input"
+                className="omnisend-subscribe-input-email subscribe-input"
                 disabled={loading}
               />
-              <button type="submit" className="btn-submit" disabled={loading}>
+              <button type="submit" className="omnisend-subscribe-button btn-submit" disabled={loading}>
                 {loading ? 'Submitting...' : 'Subscribe'}
               </button>
             </form>
@@ -222,7 +211,6 @@ export default function App() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="footer-bar">
         <span>© GUDSEX ✦ ALL RIGHTS RESERVED</span>
         <div>
