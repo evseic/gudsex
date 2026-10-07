@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>gudsex ✦ coming soon</title>
+
+  <!-- Omnisend Tracking Snippet -->
+  <script type="text/javascript">
+        window.omnisend = window.omnisend || [];
+        omnisend.push(["brandID", "6ac0c03ff9e55097b6c819e1"]);
+        omnisend.push(["track", "$pageViewed"]);
+        !function(){var e=document.createElement("script");
+        e.type="text/javascript",e.async=!0,
+        e.src="https://omnisnippet1.com/inshop/launcher-v2.js";
+        var t=document.getElementsByTagName("script")[0];
+        t.parentNode.insertBefore(e,t)}();
+  </script>
   
   <!-- Meta & Favicon Icons -->
   <link rel="icon" type="image/svg+xml" href="public/favicon.svg">
@@ -554,6 +566,11 @@
       } finally {
         subForm.style.display = 'none';
         successMsg.style.display = 'block';
+
+        // Omnisend identify event if available
+        if (window.omnisend) {
+          window.omnisend.push(["identify", { email: email }]);
+        }
 
         if (window.confetti) {
           confetti({
