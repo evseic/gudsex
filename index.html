@@ -550,6 +550,30 @@
       submitBtn.innerText = 'Submitting...';
       submitBtn.disabled = true;
 
+      // 1. Omnisend Direct Contact Subscription
+      if (window.omnisend) {
+        try {
+          window.omnisend.push(["identify", {
+            email: email,
+            status: "subscribed",
+            identifiers: [{
+              type: "email",
+              id: email,
+              channels: {
+                email: {
+                  status: "subscribed",
+                  statusDate: new Date().toISOString()
+                }
+              }
+            }]
+          }]);
+          window.omnisend.push(["track", "$emailSubscribed", { email: email }]);
+        } catch(omniErr) {
+          console.error("Omnisend integration error:", omniErr);
+        }
+      }
+
+      // 2. Supabase Real-time Database Insert
       try {
         await fetch(`${SUPABASE_URL}/rest/v1/subscribers`, {
           method: 'POST',
@@ -566,11 +590,6 @@
       } finally {
         subForm.style.display = 'none';
         successMsg.style.display = 'block';
-
-        // Omnisend identify event if available
-        if (window.omnisend) {
-          window.omnisend.push(["identify", { email: email }]);
-        }
 
         if (window.confetti) {
           confetti({
