@@ -529,6 +529,7 @@
 
     const SUPABASE_URL = 'https://dambuszjzkaeezjlkybh.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_yq1OhLPJFzk0ZLAC_QLtAw__xZmtysP';
+    const OMNISEND_API_KEY = '6ac0c03ff9e55097b6c819e1-iNddFEB2001ejjEOaZ83WrfgASenONATefrwNr96XTJsJ1T0Cv';
 
     const body = document.getElementById('body');
     const fullPhotoBtn = document.getElementById('fullPhotoBtn');
@@ -557,23 +558,46 @@
       submitBtn.innerText = 'Submitting...';
       submitBtn.disabled = true;
 
-      // 1. Omnisend Direct Push Event
-      window.omnisend = window.omnisend || [];
+      // 1. Direct Omnisend API v3 Contact Creation
       try {
-        window.omnisend.push(["identify", {
-          email: email,
-          status: "subscribed"
-        }]);
-        window.omnisend.push(["contact", {
-          email: email,
-          status: "subscribed"
-        }]);
-        window.omnisend.push(["track", "$emailSubscribed", { email: email }]);
-      } catch(omniErr) {
-        console.error("Omnisend push error:", omniErr);
+        await fetch('https://api.omnisend.com/v3/contacts', {
+          method: 'POST',
+          headers: {
+            'X-API-KEY': OMNISEND_API_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: email,
+            status: 'subscribed',
+            statusDate: new Date().toISOString(),
+            identifiers: [
+              {
+                type: 'email',
+                id: email,
+                channels: {
+                  email: {
+                    status: 'subscribed'
+                  }
+                }
+              }
+            ]
+          })
+        });
+      } catch (omniErr) {
+        console.error("Omnisend API v3 error:", omniErr);
       }
 
-      // 2. Supabase Real-time Database Insert
+      // 2. Omnisend JS Tracker event
+      window.omnisend = window.omnisend || [];
+      try {
+        window.omnisend.push(["identify", { email: email, status: "subscribed" }]);
+        window.omnisend.push(["contact", { email: email, status: "subscribed" }]);
+        window.omnisend.push(["track", "$emailSubscribed", { email: email }]);
+      } catch(omniJsErr) {
+        console.error("Omnisend JS push error:", omniJsErr);
+      }
+
+      // 3. Supabase Real-time Database Insert
       try {
         await fetch(`${SUPABASE_URL}/rest/v1/subscribers`, {
           method: 'POST',
