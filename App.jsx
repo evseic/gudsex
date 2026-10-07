@@ -89,8 +89,9 @@ export default function App() {
     if (!email || !email.includes('@')) return;
 
     setLoading(true);
+    const nowIso = new Date().toISOString();
 
-    // 1. Direct Omnisend API v3 Contact Creation
+    // 1. Omnisend API v3 Contact Creation with Subscribed Status & Tags to trigger Welcome Automation
     try {
       await fetch('https://api.omnisend.com/v3/contacts', {
         method: 'POST',
@@ -101,14 +102,16 @@ export default function App() {
         body: JSON.stringify({
           email: email,
           status: 'subscribed',
-          statusDate: new Date().toISOString(),
+          statusDate: nowIso,
+          tags: ['welcome', 'newsletter', 'website_signup'],
           identifiers: [
             {
               type: 'email',
               id: email,
               channels: {
                 email: {
-                  status: 'subscribed'
+                  status: 'subscribed',
+                  statusDate: nowIso
                 }
               }
             }
@@ -119,12 +122,17 @@ export default function App() {
       console.error("Omnisend API v3 error:", omniErr);
     }
 
-    // 2. Omnisend JS Tracker event
+    // 2. Omnisend JS Tracker Welcome Automation Trigger Events
     window.omnisend = window.omnisend || [];
     try {
-      window.omnisend.push(["identify", { email: email, status: "subscribed" }]);
+      window.omnisend.push(["identify", { 
+        email: email, 
+        status: "subscribed",
+        tags: ["welcome", "website_signup"]
+      }]);
       window.omnisend.push(["contact", { email: email, status: "subscribed" }]);
       window.omnisend.push(["track", "$emailSubscribed", { email: email }]);
+      window.omnisend.push(["track", "Joined Access List", { email: email }]);
     } catch (omniJsErr) {
       console.error("Omnisend JS push error:", omniJsErr);
     }
