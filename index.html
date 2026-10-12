@@ -565,7 +565,7 @@
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: email.trim() })
         });
-        const result = await response.json();
+        const result = await response.json().catch(() => { throw new Error('Signup is temporarily unavailable. Please try again later.'); });
         if (!response.ok || !result.success) throw new Error(result.error || 'Please try again.');
         window.omnisend = window.omnisend || [];
         window.omnisend.push(['identify', { email: email.trim(), status: 'subscribed', tags: ['welcome', 'website_signup'] }]);
