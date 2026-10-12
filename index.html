@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>gudsex ✦ coming soon</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>gudsex ✦ join us</title>
 
   <!-- Omnisend Tracking Snippet -->
   <script type="text/javascript">
@@ -18,14 +18,14 @@
   </script>
   
   <!-- Meta & Favicon Icons -->
-  <link rel="icon" type="image/svg+xml" href="public/favicon.svg">
-  <link rel="shortcut icon" type="image/svg+xml" href="public/favicon.svg">
-  <link rel="apple-touch-icon" href="public/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="shortcut icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/favicon.svg">
 
   <!-- Open Graph Meta Tags -->
-  <meta property="og:title" content="gudsex ✦ coming soon">
-  <meta property="og:description" content="gudsex official clothing brand. subscribe to news for priority access.">
-  <meta property="og:image" content="public/hero.png">
+  <meta property="og:title" content="gudsex ✦ join us">
+  <meta property="og:description" content="gudsex official clothing brand. Join us for priority access.">
+  <meta property="og:image" content="/hero.png">
   <meta name="twitter:card" content="summary_large_image">
 
   <!-- Google Fonts -->
@@ -455,13 +455,14 @@
       }
     }
   </style>
+<link rel="preload" href="/model-street-cutout.webp" as="image">
 </head>
 <body id="body">
   <div class="noise-overlay"></div>
 
   <!-- Background Photo -->
   <div class="hero-photo-container">
-    <img src="public/hero.png" alt="Gudsex Photo" class="hero-photo">
+    <img src="/hero.png" alt="Gudsex Photo" class="hero-photo">
     <div class="hero-vignette"></div>
   </div>
 
@@ -492,9 +493,8 @@
   <!-- Stage -->
   <main class="stage-container">
     <div class="content-box">
-      <h1 class="coming-soon-title">✦ Coming Soon ✦</h1>
+      <h1 class="coming-soon-title">✦ Join Us ✦</h1>
       
-      <p class="subscribe-label">Subscribe to news</p>
 
       <form class="omnisend-subscribe-form subscribe-form-box" id="subForm">
         <input 
@@ -504,13 +504,16 @@
           placeholder="ENTER YOUR EMAIL..." 
           class="omnisend-subscribe-input-email subscribe-input" 
           id="emailInput"
+          aria-label="Email address"
+          autocomplete="email"
         >
         <button type="submit" class="omnisend-subscribe-button btn-submit" id="submitBtn">Subscribe</button>
       </form>
 
       <div class="success-msg" id="successMsg">
-        ✦ ACCESS GRANTED // YOU ARE SUBSCRIBED
+        
       </div>
+      <p id="signupError" role="alert" style="color:#fff;font:12px var(--font-mono);margin-top:12px;display:none;"></p>
     </div>
   </main>
 
@@ -527,9 +530,6 @@
   <script>
     lucide.createIcons();
 
-    const SUPABASE_URL = 'https://dambuszjzkaeezjlkybh.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_yq1OhLPJFzk0ZLAC_QLtAw__xZmtysP';
-    const OMNISEND_API_KEY = '6ac0c03ff9e55097b6c819e1-iNddFEB2001ejjEOaZ83WrfgASenONATefrwNr96XTJsJ1T0Cv';
 
     const body = document.getElementById('body');
     const fullPhotoBtn = document.getElementById('fullPhotoBtn');
@@ -553,81 +553,34 @@
     subForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = emailInput.value;
+      document.getElementById('signupError').textContent = '';
+      document.getElementById('signupError').style.display = 'none';
       if (!email || !email.includes('@')) return;
 
       submitBtn.innerText = 'Submitting...';
       submitBtn.disabled = true;
 
-      const nowIso = new Date().toISOString();
-
-      // 1. Direct Omnisend API v3 Contact Creation with welcome tags
       try {
-        await fetch('https://api.omnisend.com/v3/contacts', {
-          method: 'POST',
-          headers: {
-            'X-API-KEY': OMNISEND_API_KEY,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            email: email,
-            status: 'subscribed',
-            statusDate: nowIso,
-            tags: ['welcome', 'newsletter', 'website_signup'],
-            identifiers: [
-              {
-                type: 'email',
-                id: email,
-                channels: {
-                  email: {
-                    status: 'subscribed',
-                    statusDate: nowIso
-                  }
-                }
-              }
-            ]
-          })
+        const response = await fetch('/api/subscribe', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email.trim() })
         });
-      } catch (omniErr) {
-        console.error("Omnisend API v3 error:", omniErr);
-      }
-
-      // 2. Omnisend JS Tracker Welcome Events
-      window.omnisend = window.omnisend || [];
-      try {
-        window.omnisend.push(["identify", { email: email, status: "subscribed", tags: ["welcome", "website_signup"] }]);
-        window.omnisend.push(["contact", { email: email, status: "subscribed" }]);
-        window.omnisend.push(["track", "$emailSubscribed", { email: email }]);
-        window.omnisend.push(["track", "Joined Access List", { email: email }]);
-      } catch(omniJsErr) {
-        console.error("Omnisend JS push error:", omniJsErr);
-      }
-
-      // 3. Supabase Real-time Database Insert
-      try {
-        await fetch(`${SUPABASE_URL}/rest/v1/subscribers`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'Prefer': 'return=minimal'
-          },
-          body: JSON.stringify({ email: email })
-        });
-      } catch (err) {
-        console.error("Supabase insert error:", err);
-      } finally {
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error(result.error || 'Please try again.');
+        window.omnisend = window.omnisend || [];
+        window.omnisend.push(['identify', { email: email.trim(), status: 'subscribed', tags: ['welcome', 'website_signup'] }]);
+        window.omnisend.push(['track', '$emailSubscribed', { email: email.trim() }]);
+        window.omnisend.push(['track', 'Joined Access List', { email: email.trim() }]);
         subForm.style.display = 'none';
-        successMsg.style.display = 'block';
-
-        if (window.confetti) {
-          confetti({
-            particleCount: 75,
-            spread: 70,
-            origin: { y: 0.7 },
-            colors: ['#ffffff', '#aaaaaa', '#444444']
-          });
-        }
+        successMsg.textContent = '';
+        successMsg.style.display = 'none';
+        try { localStorage.setItem('gudsex_access_v1', 'granted'); } catch {}
+        window.dispatchEvent(new CustomEvent('gudsex:access'));
+      } catch (error) {
+        document.getElementById('signupError').style.display = 'block';
+        document.getElementById('signupError').textContent = error.message || 'Unable to connect. Please try again.';
+        submitBtn.innerText = 'Subscribe';
+        submitBtn.disabled = false;
       }
     });
 
@@ -686,9 +639,15 @@
       if (audioCtx) stopSound(); else startSound();
     });
 
-    window.addEventListener('pointerdown', startSound, { capture: true });
-    window.addEventListener('touchstart', startSound, { capture: true });
-    window.addEventListener('click', startSound, { capture: true });
+    function firstSound(event) {
+      if (event.target.closest('button, input, form')) return;
+      startSound();
+      window.removeEventListener('pointerdown', firstSound);
+    }
+    window.addEventListener('pointerdown', firstSound);
+    window.addEventListener('gudsex:stage', () => { stopSound(); window.removeEventListener('pointerdown', firstSound); });
   </script>
+<div id="shop-root"></div>
+<script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
