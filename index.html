@@ -569,6 +569,7 @@
         if (!response.ok || !result.success) throw new Error(result.error || 'Please try again.');
         window.omnisend = window.omnisend || [];
         window.omnisend.push(['identify', { email: email.trim(), status: 'subscribed', tags: ['welcome', 'website_signup'] }]);
+        window.omnisend.push(['contact', { email: email.trim(), status: 'subscribed' }]);
         window.omnisend.push(['track', '$emailSubscribed', { email: email.trim() }]);
         window.omnisend.push(['track', 'Joined Access List', { email: email.trim() }]);
         subForm.style.display = 'none';
