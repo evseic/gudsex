@@ -9,12 +9,15 @@ const mime = {'.html':'text/html','.js':'text/javascript','.css':'text/css','.sv
 function json(res,status,data) {res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(data));}
 const attempts = new Map();
 export async function subscribe(email, fetcher = fetch) {
-  if(!env.SUPABASE_URL || !env.SUPABASE_PUBLISHABLE_KEY || !env.OMNISEND_API_KEY) throw new Error('Email collection is not configured. Please try again later.');
-  const db = await fetcher(`${env.SUPABASE_URL}/rest/v1/subscribers`, { method:'POST',signal:AbortSignal.timeout(12000),headers:{'Content-Type':'application/json',apikey:env.SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${env.SUPABASE_PUBLISHABLE_KEY}`,Prefer:'return=minimal'},body:JSON.stringify({email}) });
-  if(!db.ok) {const error = await db.json().catch(() => ({}));if(db.status !== 409 || error.code !== '23505') throw new Error('Unable to save your email. Please try again.');}
+  if(!env.OMNISEND_API_KEY) throw new Error('Email collection is not configured. Please try again later.');
   const now = new Date().toISOString();
   const contact = await fetcher('https://api.omnisend.com/v3/contacts', {method:'POST',signal:AbortSignal.timeout(12000),headers:{'Content-Type':'application/json','X-API-KEY':env.OMNISEND_API_KEY},body:JSON.stringify({email,status:'subscribed',statusDate:now,tags:['welcome','newsletter','website_signup'],identifiers:[{type:'email',id:email,channels:{email:{status:'subscribed',statusDate:now}}}]})});
   if(!contact.ok) throw new Error('Your email was saved, but subscription could not be completed. Please try again.');
+  // The optional database mirror must not block a confirmed Omnisend subscription.
+  try {
+  const db = await fetcher(`${env.SUPABASE_URL}/rest/v1/subscribers`, { method:'POST',signal:AbortSignal.timeout(12000),headers:{'Content-Type':'application/json',apikey:env.SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${env.SUPABASE_PUBLISHABLE_KEY}`,Prefer:'return=minimal'},body:JSON.stringify({email}) });
+  if(!db.ok) {const error = await db.json().catch(() => ({}));if(db.status !== 409 || error.code !== '23505') throw new Error('Unable to save your email. Please try again.');}
+  } catch { console.warn('Subscriber database mirror unavailable; Omnisend signup confirmed.'); }
   return {success:true};
 }
 export function createApplication(fetcher = fetch) { return createServer(async (req,res) => {
