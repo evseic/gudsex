@@ -1,9 +1,13 @@
 // Browser-safe Storefront token only. Never use a Shopify Admin API token here.
-const domain = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN;
-const token = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN;
+const domain = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN || 'rj5ha2-v0.myshopify.com';
+// Public Storefront token from Shopify's generated Buy Button, intended for browser use.
+const token = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN || 'd878b81e280bedb97ee27c918ac362f6';
 export const commerceConfigured = Boolean(domain && token);
+export const productPurchasable = product => commerceConfigured && Object.values(product.variants).every(Boolean);
+export const cartPurchasable = (items, products) => items.length > 0 && items.every(item => products.find(p => p.id === item.id)?.variants[`${item.color}/${item.size}`]);
 export async function checkout(items, products) {
   if (!commerceConfigured) throw new Error('Checkout is not connected yet.');
+  if (!cartPurchasable(items, products)) throw new Error('Remove items that are not available yet to continue to checkout.');
   const lines = items.map(item => {
     const product = products.find(p => p.id === item.id);
     const merchandiseId = product?.variants[`${item.color}/${item.size}`];
