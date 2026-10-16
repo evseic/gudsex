@@ -239,3 +239,5 @@
 @media(max-width:360px){.gx-header .gx-shop-link{display:block;}}
 .gx-unit-tabs {padding:18px 0 0;}
 @media(max-width:600px){.gx-header{gap:18px;}.gx-header .gx-logo{font-size:23px!important;letter-spacing:-1.5px;flex-shrink:0;}.gx-header .gx-logo span{font-size:21px;}.gx-header nav{gap:16px;}.gx-header .gx-nav{white-space:nowrap;font-size:8px!important;letter-spacing:.8px;}.gx-header .gx-nav:not(.gx-shop-link){display:none;}.gx-header .gx-bag{white-space:nowrap;font-size:8px!important;letter-spacing:.5px;gap:6px;}.gx-header .gx-shop-link{display:block;}}
+/* The landing page keeps its photo/audio controls on narrow screens; the shop link stays below signup. */
+@media(max-width:600px){.site-header .header-controls>a[href="#/shop"]{display:none;}}
