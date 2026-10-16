@@ -198,3 +198,44 @@
 @media(max-width:768px) and (max-height:650px) {
   .gx-model-wrap {top:85px;width:min(calc(100dvh - 290px),145vw);height:min(calc(100dvh - 290px),145vw);}
 }
+
+/* Shopping essentials retain the original charcoal studio and burgundy signature. */
+.gx-mode-reveal {overflow-y:auto;}
+.gx-gallery {align-self:start;position:sticky;top:0;min-width:0;}
+.gx-gallery .gx-detail-photo {position:relative;overflow:hidden;}
+.gx-gallery .gx-product-image {transition:transform .4s ease;}
+.gx-view-detail .gx-product-image {transform:scale(2.8);transform-origin:50% 37%;}
+.gx-gallery-tabs {display:flex;gap:8px;padding:20px 5vw 0;flex-wrap:wrap;}
+.gx-gallery-tabs button {padding:12px 14px;background:#ffffff08;color:#bbb0a9;border:1px solid #ffffff24!important;font:9px 'JetBrains Mono',monospace!important;letter-spacing:1px;min-height:44px;}
+.gx-gallery-tabs button[aria-pressed=true] {background:#f4f2ee;color:#211f1f;}
+.gx-image-note {font-size:10px;color:#b7aaa1;padding:14px 5vw 24px;line-height:1.6;}
+.gx-fit-note {font-size:12px;line-height:1.8;color:#c6bcb4;margin:-8px 0 25px;}
+.gx-buy-help {display:flex;gap:20px;flex-wrap:wrap;margin-bottom:25px;font-size:11px;}
+.gx-buy-help a,.gx-inline-link {text-decoration:underline!important;text-underline-offset:5px;line-height:1.8;}
+.gx-inline-link {display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-size:12px;}
+.gx-story {border-top:1px solid #ffffff18;padding:65px 8vw 75px;background:#1c1a1a;}
+.gx-story>div {display:grid;grid-template-columns:1fr 1fr;gap:8vw;margin:24px 0;align-items:center;}
+.gx-story h2 {font:italic clamp(30px,4vw,52px)/1.2 Georgia,serif;letter-spacing:-1px;}
+.gx-story p:not(.gx-eyebrow) {font-size:14px;line-height:1.9;color:#beb1a8;max-width:480px;}
+.gx-store-footer {background:#171616;border-top:1px solid #ffffff18;padding:36px 5vw;display:grid;grid-template-columns:1fr auto;gap:25px;color:#c4b8af;}
+.gx-store-footer>div {display:flex;flex-direction:column;gap:12px;}
+.gx-footer-brand {font:800 28px 'Syne',sans-serif;color:#fff!important;}
+.gx-store-footer span,.gx-store-footer>p {font:9px 'JetBrains Mono',monospace;letter-spacing:1px;}
+.gx-store-footer nav {display:flex;gap:22px;flex-wrap:wrap;align-items:center;font-size:11px;max-width:620px;}
+.gx-store-footer a:hover {color:#fff;text-decoration:underline;text-underline-offset:5px;}
+.gx-store-footer nav a {display:inline-flex;align-items:center;gap:5px;min-height:44px;}
+.gx-store-footer>p {grid-column:1/-1;color:#95867d;}
+.gx-info {max-width:900px;margin:auto;padding:75px 7vw 95px;min-height:65dvh;}
+.gx-info h1 {font:italic clamp(38px,6vw,72px)/1.1 Georgia,serif;margin:25px 0 35px;}
+.gx-info h2 {font-size:17px;margin:35px 0 12px;font-weight:500;}
+.gx-info p:not(.gx-eyebrow) {font-size:14px;line-height:1.9;color:#c7bbb2;margin:18px 0;}
+.gx-info a {text-decoration:underline;text-underline-offset:5px;}
+.gx-info .gx-contact-email {font-size:clamp(20px,4vw,34px);display:inline-flex;gap:12px;align-items:center;margin:16px 0;}
+.gx-info .gx-outline {margin-top:40px;}
+.gx-size-table {width:100%;border-collapse:collapse;margin-top:20px;font-size:11px;}
+.gx-size-table th,.gx-size-table td {text-align:left;border-bottom:1px solid #ffffff24;padding:12px 8px;}
+.gx-size-table caption {text-align:left;color:#c7bbb2;margin-bottom:12px;line-height:1.7;}
+@media(max-width:768px){.gx-gallery{position:relative;}.gx-story{padding:45px 7vw;}.gx-story>div{grid-template-columns:1fr;gap:22px;}.gx-store-footer{grid-template-columns:1fr;padding:30px 7vw;}.gx-store-footer nav{gap:8px 22px;}.gx-header nav{gap:16px;}.gx-info{padding:45px 7vw 65px;}}
+@media(max-width:360px){.gx-header .gx-shop-link{display:block;}}
+.gx-unit-tabs {padding:18px 0 0;}
+@media(max-width:600px){.gx-header{gap:18px;}.gx-header .gx-logo{font-size:23px!important;letter-spacing:-1.5px;flex-shrink:0;}.gx-header .gx-logo span{font-size:21px;}.gx-header nav{gap:16px;}.gx-header .gx-nav{white-space:nowrap;font-size:8px!important;letter-spacing:.8px;}.gx-header .gx-nav:not(.gx-shop-link){display:none;}.gx-header .gx-bag{white-space:nowrap;font-size:8px!important;letter-spacing:.5px;gap:6px;}.gx-header .gx-shop-link{display:block;}}
