@@ -241,3 +241,13 @@
 @media(max-width:600px){.gx-header{gap:18px;}.gx-header .gx-logo{font-size:23px!important;letter-spacing:-1.5px;flex-shrink:0;}.gx-header .gx-logo span{font-size:21px;}.gx-header nav{gap:16px;}.gx-header .gx-nav{white-space:nowrap;font-size:8px!important;letter-spacing:.8px;}.gx-header .gx-nav:not(.gx-shop-link){display:none;}.gx-header .gx-bag{white-space:nowrap;font-size:8px!important;letter-spacing:.5px;gap:6px;}.gx-header .gx-shop-link{display:block;}}
 /* The landing page keeps its photo/audio controls on narrow screens; the shop link stays below signup. */
 @media(max-width:600px){.site-header .header-controls>a[href="#/shop"]{display:none;}}
+
+/* A persistent bag entry remains available on the landing page and throughout the shop. */
+.gx-floating-cart {position:fixed;right:24px;bottom:24px;z-index:150;display:flex;align-items:center;gap:11px;min-height:50px;padding:15px 20px;background:#690a22;color:#fff;border:1px solid #ffffff60!important;border-radius:4px;box-shadow:0 6px 28px #0006;font:10px 'JetBrains Mono',monospace!important;letter-spacing:1px;cursor:pointer;}
+.gx-floating-cart:hover {background:#850e2d;}
+.gx-floating-cart:focus-visible {outline:2px solid #fff;outline-offset:4px;}
+.gx-store-footer {padding-bottom:100px;}
+@media(max-width:600px){.gx-floating-cart{right:16px;bottom:max(16px,env(safe-area-inset-bottom));min-height:48px;padding:13px 16px;}}
+
+body:not(.gx-active) .gx-floating-cart {top:110px;bottom:auto;}
+@media(max-width:600px){body:not(.gx-active) .gx-floating-cart{top:96px;}}
