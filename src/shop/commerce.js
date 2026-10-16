@@ -16,12 +16,14 @@ export async function checkout(items, products) {
   });
   const response = await fetch(`https://${domain}/api/2026-07/graphql.json`, {
     method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': token },
-    body: JSON.stringify({ query: `mutation CreateCart($input: CartInput!) { cartCreate(input: $input) { cart { checkoutUrl } userErrors { message } } }`, variables: { input: { lines } } })
+    body: JSON.stringify({ query: `mutation CreateCart($input: CartInput!) @inContext(language: EN) { cartCreate(input: $input) { cart { checkoutUrl } userErrors { message } } }`, variables: { input: { lines } } })
   });
   if (!response.ok) throw new Error('Unable to connect to checkout.');
   const data = await response.json();
   const error = data.errors?.[0]?.message || data.data?.cartCreate?.userErrors?.[0]?.message;
   const url = data.data?.cartCreate?.cart?.checkoutUrl;
   if (error || !url) throw new Error(error || 'Checkout is unavailable.');
-  window.location.assign(url);
+  const checkoutUrl = new URL(url);
+  checkoutUrl.searchParams.set('locale', 'en');
+  window.location.assign(checkoutUrl.toString());
 }
