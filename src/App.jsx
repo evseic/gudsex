@@ -5,7 +5,6 @@ import { StoreInfo, StoreFooter, SizeGuide } from './shop/StoreInfo';
 import { checkout, commerceConfigured, productPurchasable, cartPurchasable } from './shop/commerce';
 
 function readStorage(key, fallback) { try { const value = JSON.parse(localStorage.getItem(key)); return Array.isArray(value) ? value : fallback; } catch { return fallback; } }
-function publicRoute() { return /^#\/(shop|look|product\/|info\/)/.test(location.hash); }
 function infoRoute() { return location.hash.startsWith('#/info/') ? location.hash.slice(7) : null; }
 function hasAccess() { try { return localStorage.getItem('gudsex_access_v1') === 'granted'; } catch { return false; } }
 function routeProduct() { return products.find(p => location.hash === `#/product/${p.id}`) || null; }
@@ -41,21 +40,22 @@ function ProductPage({ product, onBack, onAdd }) {
   </main>;
 }
 export default function App() {
-  const [mode, setMode] = useState((hasAccess() || publicRoute()) ? (infoRoute() ? 'info' : routeProduct() ? 'product' : 'reveal') : 'landing');
-  const [phase, setPhase] = useState(location.hash === '#/shop' ? 'pieces' : hasAccess() || publicRoute() ? 'model' : 'closed'); const [showId, setShowId] = useState(0); const [preview, setPreview] = useState(null);
+  const [mode, setMode] = useState(hasAccess() ? (infoRoute() ? 'info' : routeProduct() ? 'product' : 'reveal') : 'landing');
+  const [phase, setPhase] = useState(location.hash === '#/shop' ? 'pieces' : hasAccess() ? 'model' : 'closed'); const [showId, setShowId] = useState(0); const [preview, setPreview] = useState(null);
   const [product, setProduct] = useState(routeProduct()); const [bagOpen, setBagOpen] = useState(false);
   const [cart, setCart] = useState(() => readStorage('gudsex_cart_v1', []).filter(i => products.some(p => p.id === i.id && p.colors.includes(i.color) && p.sizes.includes(i.size)) && Number.isInteger(i.quantity) && i.quantity > 0 && i.quantity <= 10));
   const [cartError, setCartError] = useState(''); const [checkoutBusy, setCheckoutBusy] = useState(false);
   const [info, setInfo] = useState(infoRoute());
   const [interacted, setInteracted] = useState(false); const [added, setAdded] = useState('');
+  const accessRef = useRef(hasAccess());
   const timers = useRef([]); const experienceRef = useRef(null);
   const count = cart.reduce((sum, i) => sum + i.quantity, 0);
   useLayoutEffect(() => {experienceRef.current?.scrollTo(0,0);}, [mode, product?.id]);
   useEffect(() => { try {localStorage.setItem('gudsex_cart_v1', JSON.stringify(cart));} catch {} }, [cart]);
   useEffect(() => {
-    const begin = () => { timers.current.forEach(clearTimeout); timers.current = []; const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches; setShowId(id => id + 1);setMode('reveal');setPhase('closed');setProduct(null);setInteracted(false); timers.current.push(setTimeout(() => setPhase('opening'), reduced ? 0 : 30), setTimeout(() => setPhase('statement'), 1000), setTimeout(() => setPhase('model'), 3000)); };
+    const begin = () => { accessRef.current = true; timers.current.forEach(clearTimeout); timers.current = []; const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches; setShowId(id => id + 1);setMode('reveal');setPhase('closed');setProduct(null);setInteracted(false); timers.current.push(setTimeout(() => setPhase('opening'), reduced ? 0 : 30), setTimeout(() => setPhase('statement'), 1000), setTimeout(() => setPhase('model'), 3000)); };
     window.addEventListener('gudsex:access', begin);
-    const route = () => {const p = routeProduct();setProduct(p);if(hasAccess() || publicRoute()) {const page=infoRoute();setInfo(page);setMode(page ? 'info' : p ? 'product' : 'reveal');if(!p && !page) setPhase(location.hash === '#/shop' ? 'pieces' : 'model');}}; window.addEventListener('hashchange', route);
+    const route = () => {const p = routeProduct();setProduct(p);if(accessRef.current) {const page=infoRoute();setInfo(page);setMode(page ? 'info' : p ? 'product' : 'reveal');if(!p && !page) setPhase(location.hash === '#/shop' ? 'pieces' : 'model');} else {setMode('landing');setBagOpen(false);}}; window.addEventListener('hashchange', route);
     return () => {window.removeEventListener('gudsex:access', begin);window.removeEventListener('hashchange', route);timers.current.forEach(clearTimeout);};
   }, []);
   useEffect(() => {
@@ -70,14 +70,15 @@ export default function App() {
     const timer = setTimeout(exitModel, 10000); return () => clearTimeout(timer);
   }, [mode, phase, interacted, preview]);
   function exitModel() {setInteracted(true);setPhase('exit');timers.current.push(setTimeout(() => {setPhase('pieces');}, matchMedia('(prefers-reduced-motion: reduce)').matches ? 50 : 1700));}
-  function openProduct(p) {timers.current.forEach(clearTimeout);timers.current=[];setPreview(null);setMode('product');setProduct(p);location.hash = `/product/${p.id}`;}
-  function shop() {timers.current.forEach(clearTimeout);timers.current=[];setPreview(null);setProduct(null);setInteracted(true);setMode('reveal');setPhase('pieces');location.hash='/shop';}
-  function back() {timers.current.forEach(clearTimeout);timers.current=[];setProduct(null);setInteracted(true);setMode('reveal');setPhase('model');location.hash = '/look';}
+  function requestAccess() {document.getElementById('emailInput')?.focus();}
+  function openProduct(p) {if(!accessRef.current) {requestAccess();return;}timers.current.forEach(clearTimeout);timers.current=[];setPreview(null);setMode('product');setProduct(p);location.hash = `/product/${p.id}`;}
+  function shop() {if(!accessRef.current) {requestAccess();return;}timers.current.forEach(clearTimeout);timers.current=[];setPreview(null);setProduct(null);setInteracted(true);setMode('reveal');setPhase('pieces');location.hash='/shop';}
+  function back() {if(!accessRef.current) {requestAccess();return;}timers.current.forEach(clearTimeout);timers.current=[];setProduct(null);setInteracted(true);setMode('reveal');setPhase('model');location.hash = '/look';}
   function add(item) {setCart(old => {const found = old.find(i => i.id === item.id && i.color === item.color && i.size === item.size);return found ? old.map(i => i === found ? {...i,quantity:Math.min(10,i.quantity + item.quantity)} : i) : [...old,item];});setAdded('Added to your bag');}
   function update(index, quantity) {setCart(old => old.map((i,n) => n === index ? {...i,quantity} : i));}
-  const floatingCart = <button className="gx-floating-cart" aria-label={`Open shopping bag, ${count} items`} onClick={() => {setCheckoutBusy(false);setBagOpen(true);}}><ShoppingBag size={19}/><span>BAG ({count})</span></button>;
+  const floatingCart = <button className="gx-floating-cart" aria-label={`Open shopping bag, ${count} items`} onClick={() => {if(!accessRef.current) {requestAccess();return;}setCheckoutBusy(false);setBagOpen(true);}}><ShoppingBag size={19}/><span>BAG ({count})</span></button>;
   const bagUI = bagOpen && <Modal label="Your shopping bag" onClose={() => setBagOpen(false)} className="gx-cart"><p className="gx-eyebrow">YOUR SELECTION</p><h2>Bag <em>({count})</em></h2>{cart.length === 0 ? <div className="gx-empty"><ShoppingBag size={30}/><p>Your bag is waiting.</p><button className="gx-primary" onClick={() => {setBagOpen(false);back();}}>RETURN TO THE LOOK <ArrowRight size={17}/></button></div> : <><div className="gx-cart-items">{cart.map((item, index) => {const p = products.find(p => p.id === item.id);return <div className="gx-cart-item" key={`${item.id}-${item.color}-${item.size}`}><ProductImage product={p} color={item.color}/><div><h3>{p.short}</h3><p>{item.color} / {item.size}</p><Quantity value={item.quantity} onChange={q => update(index,q)} label={`${p.short} quantity`}/><button className="gx-remove" onClick={() => setCart(old => old.filter((_,n) => n !== index))}>REMOVE</button></div><span>{p.price == null ? 'TBA' : money(p.price * item.quantity)}</span></div>;})}</div><div className="gx-cart-total"><span>SUBTOTAL</span><span>{cart.every(i => products.find(p => p.id === i.id).price != null) ? money(cart.reduce((n,i) => n + products.find(p => p.id === i.id).price * i.quantity,0)) : 'TO BE ANNOUNCED'}</span></div><button className="gx-primary" disabled={!commerceConfigured || !cartPurchasable(cart,products) || checkoutBusy} onClick={async () => {setCartError('');setCheckoutBusy(true);try {await checkout(cart,products);} catch(e) {setCartError(e.message);setCheckoutBusy(false);}}}>{checkoutBusy ? 'CONNECTING…' : commerceConfigured && cartPurchasable(cart,products) ? 'CHECKOUT' : 'ITEMS NOT AVAILABLE YET'} <ArrowUpRight size={18}/></button><p className="gx-commerce-note">{!cartPurchasable(cart,products) ? 'Remove items marked coming soon to check out. Your other selections stay in your bag.' : commerceConfigured ? 'Shipping and taxes calculated at checkout.' : 'Your selection is saved on this device. No payment is taken.'}</p><p role="alert" className="gx-notice">{cartError}</p></>}</Modal>;
-  if(mode === 'landing') return <>{floatingCart}{bagUI}</>;
+  if(mode === 'landing') return null;
   return <div ref={experienceRef} className={`gx-experience gx-mode-${mode} gx-sequence-${phase}`}>
     <header className="gx-header" inert={mode === 'reveal' && !['model','pieces'].includes(phase) ? true : undefined}><button className="gx-logo" onClick={() => {back();}}>gudsex<span>✦</span></button><nav aria-label="Shop navigation"><button className="gx-nav gx-shop-link" onClick={shop}>SHOP</button><button className="gx-nav" onClick={() => {back();}}>THE LOOK</button><button className="gx-bag" onClick={() => {setCheckoutBusy(false);setBagOpen(true);}} aria-label={`Shopping bag, ${count} items`}><ShoppingBag size={17}/><span>BAG ({count})</span></button></nav></header>
     {mode === 'reveal' ? <main key={`stage-${showId}`} className={`gx-stage gx-phase-${phase}`}>
@@ -87,7 +88,7 @@ export default function App() {
         <button className="gx-hotspot gx-shirt-hotspot" aria-label="Take a closer look at the GUDSEX T-shirt" onClick={() => {setInteracted(true);setPreview(products[0]);}} onFocus={() => setInteracted(true)} disabled={phase !== 'model'}><span className="gx-dot"/><span>T-SHIRT <ArrowUpRight size={13}/></span></button>
       </div>
       <div className="gx-stage-bottom" aria-hidden={!['model','pieces'].includes(phase)} inert={!['model','pieces'].includes(phase) ? true : undefined}><div><p className="gx-eyebrow">THE SHOW IS OPEN</p><h1>{phase === 'pieces' ? 'The pieces.' : 'Meet the first expression.'}</h1><p className="gx-discovery-hint">{phase === 'pieces' ? 'Select a piece to enter.' : 'Select a piece. Take a closer look.'}</p></div><button className="gx-outline" onClick={phase === 'pieces' ? back : exitModel} disabled={phase === 'exit'}>{phase === 'pieces' ? 'RETURN TO THE LOOK' : 'VIEW THE PIECES'} <ArrowRight size={17}/></button></div>
-      <div className="gx-statement" role="status" aria-hidden={phase !== 'statement'}><p><span>SEE IT.</span> <span>WANT IT.</span> <span>FUCK IT.</span></p></div>
+      <div className="gx-statement" role="status" aria-hidden={phase !== 'statement'}><p><span>FUCK</span> <span>FUCK</span> <span>FUCK</span></p></div>
       {['model','pieces'].includes(phase) && <button className="gx-replay" onClick={() => window.dispatchEvent(new CustomEvent('gudsex:access'))}>REPLAY SHOW</button>}
     </main> : mode === 'info' ? <StoreInfo page={info} onShop={shop}/> : product ? <ProductPage key={product.id} product={product} onBack={back} onAdd={add}/> : null}
     <StoreFooter/>
