@@ -251,3 +251,6 @@
 
 body:not(.gx-active) .gx-floating-cart {top:110px;bottom:auto;}
 @media(max-width:600px){body:not(.gx-active) .gx-floating-cart{top:96px;}}
+
+/* Match front cap mockup scale across differently padded source images. */
+.gx-product-image[data-product="cap"][data-color="Black"][data-view="front"] {scale:.91;}
