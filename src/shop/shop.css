@@ -254,3 +254,17 @@ body:not(.gx-active) .gx-floating-cart {top:110px;bottom:auto;}
 
 /* Match front cap mockup scale across differently padded source images. */
 .gx-product-image[data-product="cap"][data-color="Black"][data-view="front"] {scale:.91;}
+
+/* Keep color selection within reach of the product photo on phones. */
+.gx-mobile-colors {display:none;}
+@media(max-width:768px) {
+  .gx-detail .gx-desktop-colors {display:none;}
+  .gx-mobile-colors {display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 6vw;background:#211e1d;border-bottom:1px solid #ffffff24;position:sticky;top:0;z-index:3;}
+  .gx-mobile-colors>span {font:10px 'JetBrains Mono',monospace;letter-spacing:1px;}
+  .gx-mobile-colors>div {display:flex;gap:8px;}
+  .gx-color-option {display:flex;align-items:center;gap:8px;min-height:44px;padding:9px 12px;background:transparent;color:#d3c9c2;border:1px solid #ffffff30!important;font-size:11px;}
+  .gx-color-option[aria-pressed=true] {border-color:#f5f0e9!important;background:#ffffff12;color:#fff;}
+  .gx-color-dot {width:16px;height:16px;border-radius:50%;border:1px solid #ffffff50;}
+  .gx-color-dot.white {background:#fffdf7;}
+  .gx-color-dot.black {background:#252222;}
+}
