@@ -401,7 +401,11 @@
     /* MOBILE & TABLET MEDIA QUERIES */
     @media (max-width: 768px) {
       .hero-photo {
-        object-position: center 20%;
+        object-fit: contain;
+        object-position: center top;
+        padding-top: 90px;
+        padding-bottom: 90px;
+        transform: none;
         filter: contrast(108%) brightness(84%) grayscale(10%);
       }
 
@@ -464,7 +468,7 @@
 
   <!-- Background Photo -->
   <div class="hero-photo-container">
-    <picture><source media="(max-width: 768px)" srcset="/model-street-reference.webp"><img src="/hero.png" alt="GUDSEX collection" class="hero-photo"></picture>
+    <picture><source media="(max-width: 768px)" srcset="/hero-mobile-ring.png"><img src="/hero.png" alt="GUDSEX collection" class="hero-photo"></picture>
     <div class="hero-vignette"></div>
   </div>
 
