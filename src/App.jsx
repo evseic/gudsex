@@ -18,7 +18,7 @@ function Modal({ label, children, onClose, className = '' }) {
 function Quantity({ value, onChange, label = 'Quantity' }) {
   return <div className="gx-quantity"><button aria-label={`Decrease ${label}`} disabled={value <= 1} onClick={() => onChange(value - 1)}><Minus size={14}/></button><span aria-live="polite">{value}</span><button aria-label={`Increase ${label}`} disabled={value >= 10} onClick={() => onChange(value + 1)}><Plus size={14}/></button></div>;
 }
-function ProductImage({ product, color = 'White', ...props }) { return <img key={color} className="gx-product-image" src={product.images[color]} alt={`${color} ${product.name}`} {...props}/>; }
+function ProductImage({ product, color = 'White', ...props }) { return <img key={color} className="gx-product-image" data-product={product.id} data-color={color} data-view="front" src={product.images[color]} alt={`${color} ${product.name}`} {...props}/>; }
 function ProductPage({ product, onBack, onAdd }) {
   const [color, setColor] = useState('White'); const [size, setSize] = useState(product.sizes.length === 1 ? 'One Size' : '');
   const [view, setView] = useState('front');
@@ -26,7 +26,7 @@ function ProductPage({ product, onBack, onAdd }) {
   const heading = useRef(null);
   useEffect(() => { heading.current?.focus({preventScroll:true}); }, []);
   return <main className="gx-detail">
-    <div className="gx-gallery"><div className={`gx-detail-photo gx-view-${view}`}><img className="gx-product-image" src={view === 'back' ? product.backImages[color] : product.images[color]} alt={`${color} ${product.name}, ${view === 'detail' ? 'logo close-up' : view + ' view'}`}/><span className="gx-photo-caption">GUDSEX / {product.number} / {color.toUpperCase()} / {view.toUpperCase()}</span></div><div className="gx-gallery-tabs" role="group" aria-label="Product views">{['front','back','detail'].map(v => <button key={v} aria-pressed={view === v} onClick={()=>setView(v)}>{v === 'detail' ? 'LOGO CLOSE-UP' : v.toUpperCase()}</button>)}</div><p className="gx-image-note">Product mockups. Colors and placement may vary slightly.</p></div>
+    <div className="gx-gallery"><div className={`gx-detail-photo gx-view-${view}`}><img className="gx-product-image" data-product={product.id} data-color={color} data-view={view === 'back' ? 'back' : 'front'} src={view === 'back' ? product.backImages[color] : product.images[color]} alt={`${color} ${product.name}, ${view === 'detail' ? 'logo close-up' : view + ' view'}`}/><span className="gx-photo-caption">GUDSEX / {product.number} / {color.toUpperCase()} / {view.toUpperCase()}</span></div><div className="gx-gallery-tabs" role="group" aria-label="Product views">{['front','back','detail'].map(v => <button key={v} aria-pressed={view === v} onClick={()=>setView(v)}>{v === 'detail' ? 'LOGO CLOSE-UP' : v.toUpperCase()}</button>)}</div><p className="gx-image-note">Product mockups. Colors and placement may vary slightly.</p></div>
     <div className="gx-detail-copy"><button className="gx-text-button" onClick={onBack}><ArrowLeft size={16}/> THE LOOK</button>
       <p className="gx-eyebrow">THE FIRST EXPRESSION / {product.number}</p><h1 ref={heading} tabIndex={-1}>{product.name}</h1>
       <p className="gx-description">{product.description}</p><p className="gx-price">{product.price == null ? 'Price to be announced' : money(product.price)}</p>
