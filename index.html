@@ -460,6 +460,27 @@
         padding: 0.5rem 0.75rem;
       }
     }
+
+/* Keep mobile signup steady when browser controls change or a field is focused. */
+@media (max-width: 768px) {
+  .noise-overlay,
+  .hero-photo-container {
+    height: 100svh;
+  }
+
+  .stage-container {
+    min-height: 100svh;
+  }
+
+  .subscribe-input {
+    min-width: 0;
+    font-size: 16px; /* Prevent automatic focus zoom in iOS Safari. */
+  }
+
+  .content-box:focus-within .coming-soon-title {
+    animation-play-state: paused;
+  }
+}
   </style>
 <link rel="preload" href="/model-street-cutout.webp" as="image">
 </head>
