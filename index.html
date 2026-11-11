@@ -709,6 +709,6 @@
     window.addEventListener('gudsex:stage', () => { stopSound(); window.removeEventListener('pointerdown', firstSound); });
   </script>
 <div id="shop-root"></div>
-<script type="module" src="/src/main.jsx"></script>
+<script type="module">if (!document.getElementById('gudsex-pause-layer')) import('/src/main.jsx');</script>
 </body>
 </html>
