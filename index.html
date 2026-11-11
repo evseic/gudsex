@@ -485,6 +485,39 @@
 <link rel="preload" href="/model-street-cutout.webp" as="image">
 </head>
 <body id="body">
+  <!-- Temporary pause layer: remove this block to reopen the original site. -->
+  <style id="gudsex-pause-style">
+    html body { overflow: hidden !important; }
+    body > :not(#gudsex-pause-layer) { visibility: hidden !important; pointer-events: none !important; }
+    #gudsex-pause-layer {
+      position: fixed; inset: 0; z-index: 2147483647;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100dvh; padding: 28px; box-sizing: border-box;
+      background: #000; color: #fff; text-align: center;
+      font-family: 'Space Grotesk', Arial, sans-serif;
+    }
+    #gudsex-pause-layer h1 { margin: 0 0 24px; font-size: clamp(52px, 10vw, 128px); line-height: 1.05; font-weight: 400; letter-spacing: -0.065em; }
+    #gudsex-pause-layer p { margin: 0; color: #aaa; font-size: clamp(16px, 2.5vw, 22px); line-height: 1.7; }
+    #gudsex-pause-layer .pause-logo { margin-top: 64px; font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.04em; color: #fff; }
+  </style>
+  <main id="gudsex-pause-layer" aria-label="A message from gudsex">
+    <h1>I'm Tired</h1>
+    <p>see you soon , maybe never )</p>
+    <div class="pause-logo" aria-label="gudsex">gudsex <span aria-hidden="true">✦</span></div>
+  </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      for (const element of document.body.children) {
+        if (element.id !== 'gudsex-pause-layer') {
+          element.inert = true;
+          element.setAttribute('aria-hidden', 'true');
+        }
+      }
+    });
+    // Keep clicks on the pause screen from reaching the original audio interaction.
+    document.getElementById('gudsex-pause-layer').addEventListener('pointerdown', event => event.stopPropagation());
+  </script>
+
   <div class="noise-overlay"></div>
 
   <!-- Background Photo -->
